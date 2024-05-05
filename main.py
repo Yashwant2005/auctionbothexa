@@ -71,12 +71,52 @@ async def start(event):
         buttons=[
         [
             Button.url('AUCTION', AUCTION_GROUP_LINK),
-            Button.url('CHANNEL', AUCTION_CHANNEL_LINK)
+            Button.url('', AUCTION_CHANNEL_LINK)
+        ],
+        [
+            Button.url('OWNER', OWNER_LINK),
+            Button.inline('ABOUT', 'ABOUT')
+        ], 
+        [
+            Button.url(COMMUNITY_NAME, COMMUNITY_LINK)
         ]
       ]
     )
 
 
+
+@client.on(events.CallbackQuery(data='ABOUT'))
+async def submitcb(event):
+    await client.edit_message(event.sender_id, event.message_id, "Hey!\nMy developer - @Anime2005yes\n\nDo you want to make a similar bot?\n~Check the buttons given below", 
+        buttons=[
+        [
+            Button.url('OWNER', 'https://t.me/Anime2005yes'),
+            Button.url('', 'https://t.me/Phg_hexa')
+        ],
+        [
+            Button.inline('Back', 'BAMCK')
+        ]
+      ]  
+    )
+
+@client.on(events.CallbackQuery(data='BAMCK'))
+async def submitcb(event):
+    await client.edit_message(event.sender_id, event.message_id, START_CAPTION
+        ,
+        buttons=[
+        [
+            Button.url('AUCTION', AUCTION_GROUP_LINK),
+            Button.url('', AUCTION_CHANNEL_LINK)
+        ],
+        [
+            Button.url('OWNER', OWNER_LINK),
+            Button.inline('ABOUT', 'ABOUT')
+        ],
+        [
+            Button.url(COMMUNITY_NAME, COMMUNITY_LINK)
+        ]
+      ]
+    )
 user_cache = {}
 
 @client.on(events.NewMessage(pattern='/add'))

@@ -705,6 +705,146 @@ async def approvecb(event):
         
 spam_chats = []
 
+auction_mode = False  
+
+@client.on(events.NewMessage(pattern='/auction on'))
+async def auction_on_handler(event):
+    global auction_mode
+    if str(event.from_id.user_id) == 'bot owner id' and event.chat_id == allowed_group_id:
+        auction_mode = True
+        await event.reply("Auction mode is now ON. Only numeric messages are allowed.")
+    else:
+        await event.reply("You are not authorized to turn on auction mode.")
+
+
+@client.on(events.NewMessage)
+async def check_message(event):
+    global auction_mode
+    if auction_mode and event.chat_id == allowed_group_id:
+       
+        if re.match(r'^(\d+(\.\d+)?|(\d+)?(pd|k|/pass))$', event.message.text.lower()) or event.message.text.strip() == '.':
+           
+            return
+
+       
+        admins = await client.get_participants(event.chat_id, filter=ChannelParticipantsAdmins)
+        admin_ids = [admin.id for admin in admins] 
+
+        
+        if event.sender_id in admin_ids:
+        
+            return
+        else:
+ 
+            await event.delete()
+@client.on(events.NewMessage(pattern='/auction off'))
+async def auction_off_handler(event):
+    global auction_mode
+    
+    admins = await client.get_participants(event.chat_id, filter=ChannelParticipantsAdmins)
+    admin_ids = [admin.id for admin in admins] 
+
+    if event.sender_id in admin_ids:
+        auction_mode = False
+        await event.reply("Auction mode is now OFF. Normal conversation is allowed.")
+    else:
+        await event.reply("You are not authorized to turn off auction mode.")  
+
+dot_count = 0
+
+
+import asyncio
+
+
+@client.on(events.NewMessage)
+async def auto_count_handler(event):
+    
+    if event.chat_id != allowed_group_id or not auction_mode:
+        return
+
+    message_text = event.message.text.strip()
+
+    if message_text == '.' and str(event.sender_id) in admin_ids:
+       
+        sent_message = await event.reply('▫️')
+        await asyncio.sleep(1)  
+
+        
+        await sent_message.edit('▫️▫️')
+        await asyncio.sleep(2)  
+
+        await sent_message.edit('▫️▫️▫️')
+        await asyncio.sleep(2) 
+
+       
+        await sent_message.edit('▫️▫️▫️▫️')
+      
+        await asyncio.sleep(1)  
+        await sent_message.edit('... /sold ')
+
+from telethon.tl.types import ChannelParticipantsAdmins
+
+
+@client.on(events.NewMessage(pattern='/sold'))
+async def sold_handler(event):
+    
+    if not event.is_reply:
+        await event.reply("Please use the /sold command by replying to the message of the item.")
+        return
+
+    
+    custom_message = event.message.text.partition(' ')[2].strip()
+
+   
+    admins = await client.get_participants(event.chat_id, filter=ChannelParticipantsAdmins)
+    admin_ids = [admin.id for admin in admins] 
+
+    if event.sender_id not in admin_ids:
+        await event.reply("You are not authorized to use the /sold command.")
+        return
+
+    
+    replied_message = await event.get_reply_message()
+
+    
+    user_identifier = "@" + replied_message.sender.username if replied_message.sender.username else replied_message.sender_id
+
+    
+    replied_message_content = replied_message.text
+
+    
+    sold_message = f"Item sold to {user_identifier} in {replied_message_content}: {custom_message}"
+
+   
+    sold_reply = await replied_message.reply(sold_message)
+
+    
+    await client.pin_message(event.chat_id, sold_reply.id)
+
+
+@client.on(events.NewMessage(pattern='/unsold'))
+async def unsold_handler(event):
+    
+    admins = await client.get_participants(event.chat_id, filter=ChannelParticipantsAdmins)
+    admin_ids = [admin.id for admin in admins]  
+
+    if event.sender_id not in admin_ids:
+        await event.reply("You are not authorized to use the /unsold command.")
+        return
+
+    
+    player_name = event.message.text.partition(' ')[2].strip()
+
+    
+    if player_name:
+       
+        unsold_message = f" {  player_name} was unsold"
+
+        
+        await event.reply(unsold_message)
+    else:
+        await event.reply("Please provide the player's name in the /unsold command.")
+
 @client.on(events.NewMessage(pattern="^/tagall|@all|/all ?(.*)"))
 async def mentionall(event):
     chat_id = event.chat_id

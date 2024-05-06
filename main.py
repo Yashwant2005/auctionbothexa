@@ -536,13 +536,6 @@ async def submitcb(event):
   await client.edit_message(event.sender_id, event.message_id, user_cache[event.sender_id]['text']+"\n\nSUBMITED\nUsally it take 3-4 hour to get accepted or rejected.\nCheck the buttons given below", 
         buttons=[
         [
-            Button.url('PENDING', PENDING_CHANNEL_LINK)
-        ],
-        [
-            Button.url('APPROVED', APPROVED_CHANNEL_LINK),
-            Button.url('REJECTED', REJECTED_CHANNEL_LINK)
-        ],
-        [
             Button.url('AUCTION GROUP', AUCTION_GROUP_LINK)
         ]
        ]
@@ -578,13 +571,6 @@ async def deletecb(event):
 async def submitcb(event):
     await client.edit_message(event.sender_id, event.message_id, user_cache[event.sender_id]['text']+"\n\nSUBMITED\nUsally it take 3-4 hour to get accepted or rejected.\nCheck the buttons given below", 
         buttons=[
-        [
-            Button.url('PENDING', PENDING_CHANNEL_LINK)
-        ],
-        [
-            Button.url('APPROVED', APPROVED_CHANNEL_LINK),
-            Button.url('REJECTED', REJECTED_CHANNEL_LINK)
-        ],
         [
             Button.url('AUCTION GROUP', AUCTION_GROUP_LINK)
         ]

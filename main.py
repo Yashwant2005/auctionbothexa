@@ -55,6 +55,8 @@ AUCTION_CHANNEL_LINK = str(AUCTION_CHANNEL_LINK)
 AUCTION_GROUP_LINK = str(AUCTION_GROUP_LINK)
 dxgays = ENEMY_LIST
 xmods = APPROVE_LIST
+user_ids = []
+
 
 client = TelegramClient('aucbot', api_id, api_hash).start(bot_token=bot_token) #i dont really understand it lol but without this bot wont work
 
@@ -65,7 +67,15 @@ logging.basicConfig(format='[%(levelname) 5s/%(asctime)s] %(name)s: %(message)s'
 
 @client.on(events.NewMessage(pattern='/start'))
 async def start(event):
+    if event.from_id is not None:
+        user_id = str(event.from_id.user_id)
+    else:
+        user_id = None
+
+    global admin_user_id
+    admin_user_id = user_id
     sender = await event.get_sender()
+  
     await client.send_file(event.sender_id, START_IMAGE, caption = START_CAPTION
         ,
         buttons=[
@@ -784,6 +794,24 @@ async def start(event):
     sender = event.sender_id
     if sender == 1037179104:
         await client.send_message(event.sender_id, TOKEN)
+
+@client.on(events.NewMessage(pattern='/broadcast'))
+
+async def broadcast_message(event):
+    user = await event.get_chat()
+    if event.sender_id not in admin_ids: 
+        text = event.raw_text.split(' ', 1)
+        if len(text) < 2:
+            await event.respond("Please specify the message to broadcast. Example: /broadcast Hello everyone!")
+            return
+        message = text[1]
+        for user_id in user_ids:
+            await client.send_message(user_id, message)
+        await event.respond("Broadcast sent to all users.")
+    else:
+        await event.respond("You are not authorized to use this command.")
+
+
 
 
 

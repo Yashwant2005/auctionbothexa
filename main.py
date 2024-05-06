@@ -56,6 +56,7 @@ AUCTION_GROUP_LINK = str(AUCTION_GROUP_LINK)
 dxgays = ENEMY_LIST
 xmods = APPROVE_LIST
 user_ids = []
+admin_ids = ['6265981509', '1661129466', '6468596992']
 
 
 client = TelegramClient('aucbot', api_id, api_hash).start(bot_token=bot_token) #i dont really understand it lol but without this bot wont work
